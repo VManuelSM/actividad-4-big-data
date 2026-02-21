@@ -11,6 +11,19 @@ HADOOP_BIN="${HADOOP_BIN:-}"
 HDFS_BIN="${HDFS_BIN:-}"
 PYTHON_BIN="${PYTHON_BIN:-}"
 
+print_python_install_hint() {
+  cat >&2 <<'EOF'
+Instala Python dentro del contenedor Hadoop y vuelve a ejecutar el script.
+Para imagenes Debian 9 (stretch) de bde2020:
+  printf '%s\n' \
+    'deb http://archive.debian.org/debian stretch main' \
+    'deb http://archive.debian.org/debian-security stretch/updates main' \
+    > /etc/apt/sources.list
+  printf '%s\n' 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid
+  apt-get update -qq && apt-get install -y -qq python-minimal
+EOF
+}
+
 find_first_executable() {
   local bin_name="$1"
   shift
@@ -56,6 +69,12 @@ if [[ -z "$HADOOP_BIN" || -z "$HDFS_BIN" ]]; then
   exit 1
 fi
 
+if [[ -n "$PYTHON_BIN" && ! -x "$PYTHON_BIN" ]]; then
+  echo "PYTHON_BIN apunta a un binario inexistente o no ejecutable: $PYTHON_BIN" >&2
+  echo "Se intentara autodeteccion de Python..." >&2
+  PYTHON_BIN=""
+fi
+
 if [[ -z "$PYTHON_BIN" ]]; then
   if command -v python3 >/dev/null 2>&1; then
     PYTHON_BIN="$(command -v python3)"
@@ -75,6 +94,7 @@ fi
 if [[ -z "$PYTHON_BIN" ]]; then
   echo "No se encontro interprete Python en el nodo Hadoop (python3/python/python2)." >&2
   echo "Debug rapido: ls /usr/bin/python* /usr/local/bin/python* 2>/dev/null" >&2
+  print_python_install_hint
   exit 1
 fi
 

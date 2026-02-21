@@ -75,14 +75,27 @@ docker compose up -d
 docker exec -it hadoop-client bash
 ```
 
-3. Desde el contenedor, ubicarte en el proyecto montado y ejecutar:
+3. Si el contenedor no trae Python instalado (común en `bde2020/*` con Debian 9), instalarlo:
 
 ```bash
-cd /workspace
-./run_hadoop_streaming.sh
+docker exec -it hadoop-namenode bash -lc "
+  printf '%s\n' \
+    'deb http://archive.debian.org/debian stretch main' \
+    'deb http://archive.debian.org/debian-security stretch/updates main' \
+    > /etc/apt/sources.list &&
+  printf '%s\n' 'Acquire::Check-Valid-Until \"false\";' > /etc/apt/apt.conf.d/99no-check-valid &&
+  apt-get update -qq &&
+  apt-get install -y -qq python-minimal
+"
 ```
 
-Si el proyecto se monta en otra ruta, ajusta `cd` en consecuencia.
+4. Ejecutar el pipeline:
+
+```bash
+docker exec -it hadoop-namenode bash -lc "cd /workspace && ./run_hadoop_streaming.sh"
+```
+
+Si deseas forzar un intérprete específico: `PYTHON_BIN=/ruta/python ./run_hadoop_streaming.sh`.
 
 ## Variables configurables
 
@@ -91,6 +104,7 @@ Si el proyecto se monta en otra ruta, ajusta `cd` en consecuencia.
 - `HDFS_INPUT` (default: `/input/clickstream/clickstream.csv`)
 - `HDFS_STAGE1_OUT` (default: `/output/clickstream_sessions`)
 - `HDFS_STAGE2_OUT` (default: `/output/clickstream_user_metrics`)
+- `PYTHON_BIN` (si quieres forzar un intérprete ya existente)
 - `STREAMING_JAR` (si no se autodetecta)
 
 Ejemplo:

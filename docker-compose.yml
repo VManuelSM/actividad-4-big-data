@@ -1,0 +1,90 @@
+services:
+  namenode:
+    platform: linux/amd64
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: hadoop-namenode
+    environment:
+      - CLUSTER_NAME=bd-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HDFS_CONF_dfs_replication=1
+    ports:
+      - "9870:9870"   # HDFS UI
+      - "8020:8020"   # HDFS RPC
+    volumes:
+      - namenode:/hadoop/dfs/name
+      - ./:/workspace
+
+  datanode:
+    platform: linux/amd64
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: hadoop-datanode
+    depends_on:
+      - namenode
+    environment:
+      - CLUSTER_NAME=bd-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - HDFS_CONF_dfs_replication=1
+    ports:
+      - "9864:9864"   # DataNode UI
+    volumes:
+      - datanode:/hadoop/dfs/data
+
+  resourcemanager:
+    platform: linux/amd64
+    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    container_name: hadoop-resourcemanager
+    depends_on:
+      - namenode
+      - datanode
+    environment:
+      - CLUSTER_NAME=bd-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+    ports:
+      - "8088:8088"   # YARN UI
+
+  nodemanager:
+    platform: linux/amd64
+    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    container_name: hadoop-nodemanager
+    depends_on:
+      - resourcemanager
+    environment:
+      - CLUSTER_NAME=bd-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+
+  historyserver:
+    platform: linux/amd64
+    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    container_name: hadoop-historyserver
+    depends_on:
+      - namenode
+      - datanode
+    environment:
+      - CLUSTER_NAME=bd-cluster
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+    ports:
+      - "8188:8188"
+    volumes:
+      - historyserver:/hadoop/yarn/timeline
+
+  client:
+    platform: linux/amd64
+    image: bde2020/hadoop-base:2.0.0-hadoop3.2.1-java8
+    container_name: hadoop-client
+    depends_on:
+      - namenode
+      - datanode
+      - resourcemanager
+    environment:
+      - CORE_CONF_fs_defaultFS=hdfs://namenode:8020
+      - YARN_CONF_yarn_resourcemanager_hostname=resourcemanager
+    volumes:
+      - ./:/workspace
+    command: ["sleep", "infinity"]
+
+volumes:
+  namenode:
+  datanode:
+  historyserver:

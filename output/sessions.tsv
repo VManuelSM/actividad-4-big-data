@@ -1,0 +1,7 @@
+u1	u1_20260220T100000_001	2026-02-20T10:00:00Z	2026-02-20T10:08:00Z	480	3	3	/home	/product/42	/home>/search>/product/42	normal
+u1	u1_20260220T104500_002	2026-02-20T10:45:00Z	2026-02-20T10:45:00Z	0	1	1	/home	/home	/home	bounce
+u2	u2_20260220T110000_001	2026-02-20T11:00:00Z	2026-02-20T11:00:00Z	0	1	1	/landing	/landing	/landing	bounce
+u3	u3_20260220T130000_001	2026-02-20T13:00:00Z	2026-02-20T13:00:05Z	5	6	6	/home	/checkout	/home>/category>/product/10>/product/11>/cart>/checkout	rapid_clicking
+u4	u4_20260220T170000_001	2026-02-20T17:00:00Z	2026-02-20T19:05:00Z	7500	6	5	/dashboard	/dashboard	/dashboard>/reportes>/reportes/detalle>/filtros>/exportar>/dashboard	long_session
+u5	u5_20260220T200000_001	2026-02-20T20:00:00Z	2026-02-20T20:00:00Z	0	1	1	/promo	/promo	/promo	bounce
+u5	u5_20260220T204500_002	2026-02-20T20:45:00Z	2026-02-20T20:45:00Z	0	1	1	/home	/home	/home	bounce

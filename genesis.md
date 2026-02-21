@@ -37,6 +37,20 @@ Hadoop integró:
 
 ---
 
+## 🕒 Línea del tiempo
+
+```mermaid
+timeline
+    title Evolución de Hadoop MapReduce
+    2003 : Google publica el paper de Google File System (GFS)
+    2004 : Google publica el paper de MapReduce
+    2005 : Doug Cutting y Mike Cafarella llevan estas ideas a Nutch
+    2006 : El proyecto se separa y toma identidad como Hadoop en Apache
+    Finales de los 2000 : Hadoop se adopta ampliamente en industria y academia
+```
+
+---
+
 ## 🎯 Problemas que resolvía
 
 1. **Escalabilidad horizontal** (usar muchas máquinas económicas).
